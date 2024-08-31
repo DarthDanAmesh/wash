@@ -21,6 +21,7 @@ export default function Index() {
     const [country, setCountry] = useState('');
     const [data, setData] = useState(null);
     const [countries, setCountries] = useState([]);
+    const [expanded, setExpanded] = useState(false);
 
     useEffect(() => {
         fetch('https://restcountries.com/v3.1/all', {
@@ -81,28 +82,40 @@ export default function Index() {
                                     key={index}
                                 />
                             ))}
-                            <View>
-                                <Text style={styles.column}>County: {country}</Text>
-                                <Text style={styles.column}>Capital: {data.capital}</Text>
-                            </View>
+                            <Text style={styles.column}>Capital: {data.capital}</Text>
                         </View>
 
                         <Card.Title>Demographics</Card.Title>
                         <Card.Divider />
-                                <Text style={styles.row}>Population: {data.population}</Text>
-                                <Text style={styles.row}>Area: {data.area} km²</Text>
-                                <Text style={styles.row}>Languages:</Text>
-                                {Object.values(data.languages).map((language, index) => (
-                                    <View style={styles.row} key={index}><Text>{language}</Text></View>
-                                ))}
-                                <Text style={styles.row}>Currency:</Text>
-                                {Object.values(data.currencies).map((currency, index) => (
-                                    <Text key={index}>{currency.name} ({currency.symbol})</Text>
-                                ))}
+                        <Text style={styles.row}>Population: {data.population}</Text>
+                        <Text style={styles.row}>Area: {data.area} km²</Text>
+                        <Text style={styles.row}>Currency: {Object.values(data.currencies).map((currency, index) => (
+                            <Text key={index}>{currency.name} ({currency.symbol})</Text>
+                        ))} </Text>
 
-
-
-                    </Card>
+                        <ListItem.Accordion
+                            content={
+                                <>
+                                    <Icon name="language" size={15} />
+                                    <ListItem.Content>
+                                        <ListItem.Title>Languages</ListItem.Title>
+                                    </ListItem.Content>
+                                </>
+                            }
+                            isExpanded={expanded}
+                            onPress={() => {
+                                setExpanded(!expanded);
+                            }}
+                        >
+                            {Object.values(data.languages).map((language, index) => (
+                                <ListItem key={index} bottomDivider>
+                                    <ListItem.Content>
+                                        <ListItem.Title>{language}</ListItem.Title>
+                                    </ListItem.Content>
+                                </ListItem>
+                            ))}
+                        </ListItem.Accordion>
+                        </Card>
                     <Card>
                         <View>
                             <Button
@@ -165,7 +178,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     row:{
-        padding: 4,
+        padding: 3,
         borderBottomColor: 'grey',
         borderBottomWidth: StyleSheet.hairlineWidth,
     },
@@ -173,6 +186,12 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlign: 'left',
     },
+    languagesRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginTop: 10,
+    },
+
     text:{
         padding: 4,
         borderBottomColor: 'grey',
